@@ -1,26 +1,15 @@
-import { useCallback } from "react";
-// import ReactFlow, {
-//   addEdge,
-//   Background,
-//   Controls,
-//   Connection,
-//   Edge,
-//   Node,
-//   ReactFlowProvider,
-//   useEdgesState,
-//   useNodesState,
-// } from "react-flow";
+import React, { useCallback } from "react";
 import {
-  addEdge,
-  Background,
-  Connection,
-  Controls,
-  Node,
   ReactFlow,
-  ReactFlowProvider,
   useEdgesState,
   useNodesState,
+  addEdge,
+  Connection,
+  Node,
+  Background,
+  Controls,
 } from "@xyflow/react";
+import Sidebar from "./Sidebar";
 
 const initialNodes: Node[] = [
   {
@@ -32,8 +21,7 @@ const initialNodes: Node[] = [
 ];
 
 export default function WorkflowCanvas() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [nodes, _, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const onConnect = useCallback(
@@ -43,9 +31,41 @@ export default function WorkflowCanvas() {
     [setEdges]
   );
 
+  // Handle node drop
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    const nodeType = event.dataTransfer.getData("application/xyflow");
+    if (!nodeType) return;
+
+    const position = { x: event.clientX - 100, y: event.clientY - 100 };
+    const newNode: Node = {
+      id: `${nodes.length + 1}`,
+      type: "default",
+      data: { label: nodeType },
+      position,
+    };
+
+    setNodes((nds: Node[]) => [...nds, newNode]);
+  };
+
+  const onDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
   return (
-    <div className="w-full h-screen bg-gray-100">
-      <ReactFlowProvider>
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <div className="w-60">
+        <Sidebar />
+      </div>
+
+      {/* Workflow Canvas */}
+      <div
+        className="flex-1 relative bg-gray-100"
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -57,7 +77,7 @@ export default function WorkflowCanvas() {
           <Background />
           <Controls />
         </ReactFlow>
-      </ReactFlowProvider>
+      </div>
     </div>
   );
 }
