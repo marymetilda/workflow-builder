@@ -10,6 +10,7 @@ import {
   ReactFlow,
   useEdgesState,
   useNodesState,
+  useReactFlow,
 } from "@xyflow/react";
 import { useCallback, useState } from "react";
 import Header from "./Header";
@@ -44,6 +45,8 @@ const WorkflowCanvas = () => {
   const [redoStack, setRedoStack] = useState<
     { nodes: Node[]; edges: Edge[] }[]
   >([]);
+
+  const reactFlowInstance = useReactFlow();
 
   const edgeTypes = {
     default: BezierEdge,
@@ -100,12 +103,19 @@ const WorkflowCanvas = () => {
     const nodeType = event.dataTransfer.getData("application/xyflow");
     if (!nodeType) return;
 
-    const position = { x: event.clientX - 100, y: event.clientY - 100 };
+    if (!reactFlowInstance) return; // Ensure ReactFlow is initialized
+
+    // Convert screen position to flow position
+    const position = reactFlowInstance.screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+
     const newNode: Node<NodeData> = {
       id: `${nodes.length + 1}`,
       type: nodeType === "decision" ? "decisionNode" : "default",
       data: { label: nodeType, description: "New node" },
-      position,
+      position, // Use the transformed position
     };
 
     setNodes((nds: Node[]) => [...nds, newNode]);
