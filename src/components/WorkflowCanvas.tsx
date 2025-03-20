@@ -136,6 +136,16 @@ const WorkflowCanvas = () => {
     }
   };
 
+  // const onDeleteNode = () => {
+  //   if (!selectedNode) return;
+
+  //   setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
+  //   setEdges((eds) => eds.filter((edge) => edge.source !== selectedNode.id && edge.target !== selectedNode.id));
+
+  //   saveHistory();
+  //   setSelectedNode(null);
+  // };
+
   return (
     <div className="w-full h-screen bg-gray-100 relative flex flex-col">
       <Header onSave={onSave} onLoad={onLoad} onUndo={onUndo} onRedo={onRedo} />
@@ -164,6 +174,7 @@ const WorkflowCanvas = () => {
           </ReactFlow>
         </div>
         <PropertiesPanel
+          setEdges={setEdges}
           selectedNode={selectedNode}
           setSelectedNode={setSelectedNode}
           setNodes={setNodes}

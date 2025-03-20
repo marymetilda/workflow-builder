@@ -1,4 +1,4 @@
-import { Node } from "@xyflow/react";
+import { Node, Edge } from "@xyflow/react";
 
 interface NodeData extends Record<string, unknown> {
   label?: string;
@@ -8,12 +8,14 @@ interface NodeData extends Record<string, unknown> {
 interface PropertiesPanelProps {
   selectedNode: Node<NodeData> | null;
   setNodes: (updater: (nds: Node<NodeData>[]) => Node<NodeData>[]) => void;
+  setEdges: (updater: (eds: Edge[]) => Edge[]) => void;
   setSelectedNode: (node: Node<NodeData> | null) => void;
 }
 
 const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   selectedNode,
   setNodes,
+  setEdges,
   setSelectedNode,
 }) => {
   if (!selectedNode) return null;
@@ -35,6 +37,17 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
       return updatedNodes;
     });
+  };
+
+  const handleDelete = () => {
+    setNodes((nodes) => nodes.filter((node) => node.id !== selectedNode.id));
+    setEdges((edges) =>
+      edges.filter(
+        (edge) =>
+          edge.source !== selectedNode.id && edge.target !== selectedNode.id
+      )
+    );
+    setSelectedNode(null);
   };
 
   return (
@@ -60,6 +73,12 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           className="border rounded px-2 py-1 w-full"
         />
       </label>
+      <button
+        onClick={handleDelete}
+        className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+      >
+        Delete Node
+      </button>
     </div>
   );
 };
