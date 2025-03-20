@@ -211,8 +211,8 @@ const WorkflowCanvas = () => {
   return (
     <div className="w-full h-screen bg-gray-100 relative flex flex-col">
       <Header onSave={onSave} onLoad={onLoad} onUndo={onUndo} onRedo={onRedo} />
-      <div className="flex flex-1">
-        <div className="w-60">
+      <div className="flex flex-1 relative">
+        <div className="w-20 md:w-32 lg:w-52">
           <Sidebar />
         </div>
         <div

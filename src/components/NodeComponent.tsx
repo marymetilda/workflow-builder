@@ -7,7 +7,7 @@ export interface NodeData extends Record<string, unknown> {
 }
 const NodeComponent: React.FC<{ data: NodeData }> = ({ data }) => {
   return (
-    <div className="bg-white border border-purple-600 rounded p-2 shadow relative">
+    <div className="bg-white border border-purple-600 rounded lg:p-2 shadow relative">
       <Handle
         type="source"
         position={Position.Top}
@@ -16,7 +16,7 @@ const NodeComponent: React.FC<{ data: NodeData }> = ({ data }) => {
       />
       <div className="flex items-center justify-center">
         <FcProcess />
-        <p className="font-bold">{data.label}</p>
+        <p className="text-[10px] lg:text-xs">{data.label}</p>
       </div>
       <Handle
         type="target"

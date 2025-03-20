@@ -4,10 +4,10 @@ import { TbAirConditioning } from "react-icons/tb";
 
 const DecisionNode: React.FC<{ data: NodeData }> = ({ data }) => {
   return (
-    <div className="border border-yellow-600 rounded p-2 shadow relative">
+    <div className="border border-yellow-600 rounded lg:p-2 shadow relative">
       <div className="flex items-center justify-center gap-2">
         <TbAirConditioning className="text-yellow-600" />
-        <p className="text-lg">{data.label}</p>
+        <p className="text-[10px] lg:text-lg">{data.label}</p>
       </div>
       <Handle
         type="source"
@@ -21,14 +21,18 @@ const DecisionNode: React.FC<{ data: NodeData }> = ({ data }) => {
         id="yes"
         className="w-2 h-2 bg-green-500"
       />
-      <span className="absolute text-xs -right-5 top-1/2">Yes</span>
+      <span className="absolute text-[5px] lg:text-xs -right-3 lg:-right-5 top-1/2">
+        Yes
+      </span>
       <Handle
         type="source"
         position={Position.Bottom}
         id="no"
         className="w-2 h-2 bg-red-500"
       />
-      <span className="absolute text-xs left-1/2 top-full">No</span>
+      <span className="absolute text-[5px] lg:text-xs left-1/2 top-full">
+        No
+      </span>
     </div>
   );
 };

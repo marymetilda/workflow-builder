@@ -30,7 +30,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="w-60 h-screen bg-gray-200 p-4 border-r shadow-lg">
+    <div className="w-20 md:w-32 lg:w-52 xl:w-60 h-screen bg-gray-200 p-4 border-r shadow-lg">
       <h2 className="text-xl font-bold mb-4">Nodes</h2>
       {nodeTypes.map((node) => (
         <div
@@ -40,7 +40,7 @@ export default function Sidebar() {
           onDragStart={(event) => onDragStart(event, node.type)}
         >
           {node.icon && node.icon}
-          {node.label}
+          <p className="hidden md:block">{node.label}</p>
         </div>
       ))}
     </div>
