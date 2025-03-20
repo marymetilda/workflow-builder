@@ -59,7 +59,10 @@ const WorkflowCanvas = () => {
         return;
       }
 
-      setEdges((eds) => addEdge(connection, eds));
+      const label = connection.sourceHandle === "yes" ? "Yes" : "No";
+      const newEdge = { ...connection, label, data: { label } };
+
+      setEdges((eds) => addEdge(newEdge, eds));
     },
     [setEdges]
   );

@@ -3,7 +3,7 @@ import { NodeData } from "./NodeComponent";
 
 const DecisionNode: React.FC<{ data: NodeData }> = ({ data }) => {
   return (
-    <div className="bg-yellow-200 border rounded-lg p-2 shadow relative">
+    <div className="bg-yellow-200 border rounded-lg p-2 shadow relative min-w-60 min-h-32">
       <p className="font-bold">{data.label}</p>
       <p className="text-xs text-gray-700">{data.description}</p>
       <Handle
@@ -22,7 +22,7 @@ const DecisionNode: React.FC<{ data: NodeData }> = ({ data }) => {
       <span className="absolute text-xs left-1/2 bottom-0">No</span>
       <Handle
         type="target"
-        position={Position.Left}
+        position={Position.Top}
         id="target"
         className="w-2 h-2 bg-blue-500"
       />
