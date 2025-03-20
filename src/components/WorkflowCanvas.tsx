@@ -59,12 +59,22 @@ const WorkflowCanvas = () => {
         return;
       }
 
-      const label = connection.sourceHandle === "yes" ? "Yes" : "No";
+      // Find the source node
+      const sourceNode = nodes.find((node) => node.id === connection.source);
+
+      // Only apply labels if the source node is a decision node
+      const label =
+        sourceNode?.type === "decisionNode"
+          ? connection.sourceHandle === "yes"
+            ? "Yes"
+            : "No"
+          : "";
+
       const newEdge = { ...connection, label, data: { label } };
 
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges]
+    [setEdges, nodes]
   );
 
   const saveHistory = (newEdges?: Edge<NodeData>[]) => {
@@ -135,16 +145,6 @@ const WorkflowCanvas = () => {
       setEdges(nextState.edges);
     }
   };
-
-  // const onDeleteNode = () => {
-  //   if (!selectedNode) return;
-
-  //   setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
-  //   setEdges((eds) => eds.filter((edge) => edge.source !== selectedNode.id && edge.target !== selectedNode.id));
-
-  //   saveHistory();
-  //   setSelectedNode(null);
-  // };
 
   return (
     <div className="w-full h-screen bg-gray-100 relative flex flex-col">
