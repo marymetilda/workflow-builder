@@ -5,9 +5,7 @@ import {
   Connection,
   Controls,
   Edge,
-  Handle,
   Node,
-  Position,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -16,6 +14,8 @@ import { useCallback, useState } from "react";
 import Header from "./Header";
 import PropertiesPanel from "./PropertiesPanel";
 import Sidebar from "./Sidebar";
+import NodeComponent, { NodeData } from "./NodeComponent";
+import DecisionNode from "./DecisionNode";
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -26,40 +26,14 @@ const initialNodes: Node<NodeData>[] = [
   },
 ];
 
-const NodeComponent: React.FC<{ data: NodeData }> = ({ data }) => {
-  return (
-    <div className="bg-white border rounded-lg p-2 shadow relative">
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="source"
-        className="w-2 h-2 bg-blue-500"
-      />
-      <p className="font-bold">{data.label}</p>
-      <p className="text-xs text-gray-500">{data.description}</p>
-
-      <Handle
-        type="target"
-        position={Position.Left}
-        id="target"
-        className="w-2 h-2 bg-red-500"
-      />
-    </div>
-  );
-};
-
 const nodeTypes = {
   customNode: NodeComponent,
+  decisionNode: DecisionNode,
 };
 
 const edgeTypes = {
   default: BezierEdge,
 };
-
-interface NodeData extends Record<string, unknown> {
-  label?: string;
-  description?: string;
-}
 
 const WorkflowCanvas = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -103,7 +77,7 @@ const WorkflowCanvas = () => {
     const position = { x: event.clientX - 100, y: event.clientY - 100 };
     const newNode: Node<NodeData> = {
       id: `${nodes.length + 1}`,
-      type: "default",
+      type: nodeType === "decision" ? "decisionNode" : "default",
       data: { label: nodeType, description: "New node" },
       position,
     };
@@ -162,19 +136,17 @@ const WorkflowCanvas = () => {
   return (
     <div className="w-full h-screen bg-gray-100 relative flex flex-col">
       <Header onSave={onSave} onLoad={onLoad} onUndo={onUndo} onRedo={onRedo} />
-
       <div className="flex flex-1">
         <div className="w-60">
           <Sidebar />
         </div>
-
         <div
           className="flex-1 relative bg-gray-100"
           onDrop={onDrop}
           onDragOver={onDragOver}
         >
           <ReactFlow
-            nodes={nodes.map((node) => ({ ...node, type: "customNode" }))}
+            nodes={nodes.map((node) => ({ ...node, type: node.type }))}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
