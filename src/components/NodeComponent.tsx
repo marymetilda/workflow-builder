@@ -1,4 +1,5 @@
 import { Handle, Position } from "@xyflow/react";
+import { FcProcess } from "react-icons/fc";
 
 export interface NodeData extends Record<string, unknown> {
   label?: string;
@@ -6,18 +7,20 @@ export interface NodeData extends Record<string, unknown> {
 }
 const NodeComponent: React.FC<{ data: NodeData }> = ({ data }) => {
   return (
-    <div className="bg-white border rounded-lg p-2 shadow relative">
+    <div className="bg-white border border-purple-600 rounded p-2 shadow relative">
       <Handle
         type="source"
-        position={Position.Right}
+        position={Position.Top}
         id="source"
         className="w-2 h-2 bg-blue-500"
       />
-      <p className="font-bold">{data.label}</p>
-      <p className="text-xs text-gray-500">{data.description}</p>
+      <div className="flex items-center justify-center">
+        <FcProcess />
+        <p className="font-bold">{data.label}</p>
+      </div>
       <Handle
         type="target"
-        position={Position.Left}
+        position={Position.Bottom}
         id="target"
         className="w-2 h-2 bg-red-500"
       />

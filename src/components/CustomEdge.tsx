@@ -14,7 +14,7 @@ const CustomEdge: React.FC<CustomEdgeProps> = (props) => {
     targetY,
   });
 
-  const label = typeof data?.label === "string" ? data.label : ""; // ✅ Extract label safely from data
+  const label = typeof data?.label === "string" ? data.label : "";
 
   const handleDelete = () => {
     setEdges((edges) => edges.filter((edge) => edge.id !== id));
@@ -23,20 +23,14 @@ const CustomEdge: React.FC<CustomEdgeProps> = (props) => {
   return (
     <>
       <BaseEdge path={edgePath} />
-
-      {/* Dynamic Label (Yes / No) */}
       {label && (
         <foreignObject x={labelX - 10} y={labelY - 30} width={40} height={20}>
-          <div className="text-xs text-white bg-black p-1 rounded">{label}</div>
+          <div className="text-xs text-pink-500 p-1 rounded">{label}</div>
         </foreignObject>
       )}
 
-      {/* Delete Button */}
       <foreignObject x={labelX - 10} y={labelY - 10} width={20} height={20}>
-        <button
-          onClick={handleDelete}
-          className="bg-red-500 text-white rounded-full text-xs p-1"
-        >
+        <button onClick={handleDelete} className="text-red-700 text-xs p-1">
           X
         </button>
       </foreignObject>

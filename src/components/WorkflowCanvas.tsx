@@ -19,24 +19,22 @@ import Sidebar from "./Sidebar";
 import NodeComponent, { NodeData } from "./NodeComponent";
 import DecisionNode from "./DecisionNode";
 import CustomEdge from "./CustomEdge";
-
-const initialNodes: Node<NodeData>[] = [
-  {
-    id: "1",
-    type: "default",
-    data: { label: "Start", description: "Initial node" },
-    position: { x: 250, y: 5 },
-  },
-];
+import StartNode from "./StartNode";
+import EndNode from "./EndNode";
 
 const nodeTypes = {
   customNode: NodeComponent,
   decisionNode: DecisionNode,
+  startNode: StartNode,
+  processNode: NodeComponent,
+  endNode: EndNode,
 };
+
+const initialNodes: Node<NodeData>[] = [];
+const initialEdges: Edge[] = [];
 
 const WorkflowCanvas = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const initialEdges: Edge[] = [];
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node<NodeData> | null>(null);
   const [history, setHistory] = useState<{ nodes: Node[]; edges: Edge[] }[]>(
@@ -67,28 +65,42 @@ const WorkflowCanvas = () => {
         return;
       }
 
-      // Find the source node
-      const sourceNode = nodes.find((node) => node.id === connection.source);
+      setEdges((prevEdges) => {
+        const latestNodes = nodes; // Ensure nodes are updated correctly
 
-      // Ensure correct label for decision nodes
-      const label =
-        sourceNode?.type === "decisionNode"
-          ? connection.sourceHandle === "yes"
-            ? "Yes"
-            : "No"
-          : "";
+        const sourceNode = latestNodes.find(
+          (node) => node.id === connection.source
+        );
+        const targetNode = latestNodes.find(
+          (node) => node.id === connection.target
+        );
 
-      const newEdge: Edge = {
-        ...connection,
-        id: `${connection.source}-${connection.target}`,
-        type: "customEdge",
-        data: { label },
-        sourceHandle: connection.sourceHandle || null,
-        targetHandle: connection.targetHandle || null,
-      };
+        console.log("Source Node:", sourceNode);
+        console.log("Source Handle:", connection.sourceHandle);
 
-      console.log("New Edge Created:", newEdge);
-      setEdges((eds) => addEdge(newEdge, eds));
+        let label = "";
+
+        if (targetNode?.type === "decisionNode") {
+          if (connection.targetHandle === "yes") {
+            label = "Yes";
+          } else if (connection.targetHandle === "no") {
+            label = "No";
+          }
+        }
+
+        const newEdge: Edge = {
+          id: `${connection.source}-${connection.sourceHandle || "default"}-${connection.target}-${connection.targetHandle || "default"}`,
+          source: connection.source,
+          target: connection.target,
+          type: "customEdge",
+          data: { label },
+          sourceHandle: connection.sourceHandle || undefined,
+          targetHandle: connection.targetHandle || undefined,
+        };
+
+        console.log("New Edge Created:", newEdge);
+        return addEdge(newEdge, prevEdges);
+      });
     },
     [setEdges, nodes]
   );
@@ -103,19 +115,46 @@ const WorkflowCanvas = () => {
     const nodeType = event.dataTransfer.getData("application/xyflow");
     if (!nodeType) return;
 
-    if (!reactFlowInstance) return; // Ensure ReactFlow is initialized
+    if (!reactFlowInstance) return;
 
-    // Convert screen position to flow position
     const position = reactFlowInstance.screenToFlowPosition({
       x: event.clientX,
       y: event.clientY,
     });
 
+    let nType = "default";
+
+    switch (nodeType) {
+      case "decision":
+        nType = "decisionNode";
+
+        break;
+
+      case "start":
+        nType = "startNode";
+
+        break;
+
+      case "process":
+        nType = "processNode";
+
+        break;
+
+      case "end":
+        nType = "endNode";
+
+        break;
+
+      default:
+        nType = "default";
+        break;
+    }
+
     const newNode: Node<NodeData> = {
       id: `${nodes.length + 1}`,
-      type: nodeType === "decision" ? "decisionNode" : "default",
+      type: nType,
       data: { label: nodeType, description: "New node" },
-      position, // Use the transformed position
+      position,
     };
 
     setNodes((nds: Node[]) => [...nds, newNode]);

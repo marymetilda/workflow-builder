@@ -1,13 +1,22 @@
 import { Handle, Position } from "@xyflow/react";
 import { NodeData } from "./NodeComponent";
+import { TbAirConditioning } from "react-icons/tb";
 
 const DecisionNode: React.FC<{ data: NodeData }> = ({ data }) => {
   return (
-    <div className="bg-yellow-200 border rounded-lg p-2 shadow relative min-w-60 min-h-32">
-      <p className="font-bold">{data.label}</p>
-      <p className="text-xs text-gray-700">{data.description}</p>
+    <div className="border border-yellow-600 rounded p-2 shadow relative">
+      <div className="flex items-center justify-center gap-2">
+        <TbAirConditioning className="text-yellow-600" />
+        <p className="text-lg">{data.label}</p>
+      </div>
       <Handle
         type="source"
+        position={Position.Top}
+        id="target"
+        className="w-2 h-2 bg-blue-500"
+      />
+      <Handle
+        type="target"
         position={Position.Right}
         id="yes"
         className="w-2 h-2 bg-green-500"
@@ -19,13 +28,7 @@ const DecisionNode: React.FC<{ data: NodeData }> = ({ data }) => {
         id="no"
         className="w-2 h-2 bg-red-500"
       />
-      <span className="absolute text-xs left-1/2 bottom-0">No</span>
-      <Handle
-        type="target"
-        position={Position.Top}
-        id="target"
-        className="w-2 h-2 bg-blue-500"
-      />
+      <span className="absolute text-xs left-1/2 top-full">No</span>
     </div>
   );
 };
