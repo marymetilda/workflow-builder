@@ -5,6 +5,7 @@ import {
   Connection,
   Controls,
   Edge,
+  EdgeProps,
   Node,
   ReactFlow,
   useEdgesState,
@@ -16,6 +17,7 @@ import PropertiesPanel from "./PropertiesPanel";
 import Sidebar from "./Sidebar";
 import NodeComponent, { NodeData } from "./NodeComponent";
 import DecisionNode from "./DecisionNode";
+import CustomEdge from "./CustomEdge";
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -31,10 +33,6 @@ const nodeTypes = {
   decisionNode: DecisionNode,
 };
 
-const edgeTypes = {
-  default: BezierEdge,
-};
-
 const WorkflowCanvas = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const initialEdges: Edge[] = [];
@@ -46,6 +44,13 @@ const WorkflowCanvas = () => {
   const [redoStack, setRedoStack] = useState<
     { nodes: Node[]; edges: Edge[] }[]
   >([]);
+
+  const edgeTypes = {
+    default: BezierEdge,
+    customEdge: (props: EdgeProps) => (
+      <CustomEdge {...props} setEdges={setEdges} />
+    ),
+  };
 
   const onConnect = useCallback(
     (connection: Connection) => {
@@ -62,7 +67,7 @@ const WorkflowCanvas = () => {
       // Find the source node
       const sourceNode = nodes.find((node) => node.id === connection.source);
 
-      // Only apply labels if the source node is a decision node
+      // Ensure correct label for decision nodes
       const label =
         sourceNode?.type === "decisionNode"
           ? connection.sourceHandle === "yes"
@@ -70,8 +75,16 @@ const WorkflowCanvas = () => {
             : "No"
           : "";
 
-      const newEdge = { ...connection, label, data: { label } };
+      const newEdge: Edge = {
+        ...connection,
+        id: `${connection.source}-${connection.target}`,
+        type: "customEdge",
+        data: { label },
+        sourceHandle: connection.sourceHandle || null,
+        targetHandle: connection.targetHandle || null,
+      };
 
+      console.log("New Edge Created:", newEdge);
       setEdges((eds) => addEdge(newEdge, eds));
     },
     [setEdges, nodes]
