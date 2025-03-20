@@ -1,23 +1,21 @@
-import { useState, useCallback } from "react";
-import PropertiesPanel from "./PropertiesPanel";
-import Header from "./Header";
 import {
+  addEdge,
+  Background,
+  BezierEdge,
+  Connection,
+  Controls,
+  Edge,
+  Handle,
+  Node,
+  Position,
   ReactFlow,
   useEdgesState,
   useNodesState,
-  addEdge,
-  Connection,
-  Node,
-  Background,
-  Controls,
-  Edge,
 } from "@xyflow/react";
+import { useCallback, useState } from "react";
+import Header from "./Header";
+import PropertiesPanel from "./PropertiesPanel";
 import Sidebar from "./Sidebar";
-
-interface NodeData extends Record<string, unknown> {
-  label?: string;
-  description?: string;
-}
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -30,15 +28,32 @@ const initialNodes: Node<NodeData>[] = [
 
 const NodeComponent: React.FC<{ data: NodeData }> = ({ data }) => {
   return (
-    <div className="bg-white border rounded-lg p-2 shadow">
+    <div className="bg-white border rounded-lg p-2 shadow relative">
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="source"
+        className="w-2 h-2 bg-blue-500"
+      />
       <p className="font-bold">{data.label}</p>
       <p className="text-xs text-gray-500">{data.description}</p>
+
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="target"
+        className="w-2 h-2 bg-red-500"
+      />
     </div>
   );
 };
 
 const nodeTypes = {
   customNode: NodeComponent,
+};
+
+const edgeTypes = {
+  default: BezierEdge,
 };
 
 interface NodeData extends Record<string, unknown> {
@@ -60,15 +75,24 @@ const WorkflowCanvas = () => {
 
   const onConnect = useCallback(
     (connection: Connection) => {
+      console.log("Connection Attempt:", connection);
+
+      if (!connection.source || !connection.target) {
+        console.error(
+          "Invalid connection: Missing source or target",
+          connection
+        );
+        return;
+      }
+
       setEdges((eds) => addEdge(connection, eds));
-      saveHistory();
     },
     [setEdges]
   );
 
-  const saveHistory = () => {
-    setHistory((prev) => [...prev, { nodes, edges }]);
-    setRedoStack([]); // Clear redo stack when new changes are made
+  const saveHistory = (newEdges?: Edge<NodeData>[]) => {
+    setHistory((prev) => [...prev, { nodes, edges: newEdges ?? edges }]);
+    setRedoStack([]);
   };
 
   const onDrop = (event: React.DragEvent) => {
@@ -105,7 +129,10 @@ const WorkflowCanvas = () => {
   const onLoad = () => {
     const savedData = localStorage.getItem("workflow");
     if (savedData) {
-      const { nodes, edges } = JSON.parse(savedData);
+      const { nodes, edges } = JSON.parse(savedData) as {
+        nodes: Node<NodeData>[];
+        edges: Edge<NodeData>[];
+      };
       setNodes(nodes);
       setEdges(edges);
     }
@@ -137,7 +164,6 @@ const WorkflowCanvas = () => {
       <Header onSave={onSave} onLoad={onLoad} onUndo={onUndo} onRedo={onRedo} />
 
       <div className="flex flex-1">
-        {/* Sidebar */}
         <div className="w-60">
           <Sidebar />
         </div>
@@ -155,8 +181,8 @@ const WorkflowCanvas = () => {
             onConnect={onConnect}
             fitView
             onNodeClick={onNodeClick}
-            nodeTypes={nodeTypes} // Added this line
-            // className="h-full"
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
           >
             <Background />
             <Controls />
