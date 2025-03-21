@@ -8,22 +8,12 @@ export interface NodeData extends Record<string, unknown> {
 const NodeComponent: React.FC<{ data: NodeData }> = ({ data }) => {
   return (
     <div className="bg-white border border-purple-600 rounded lg:p-2 shadow relative">
-      <Handle
-        type="source"
-        position={Position.Top}
-        id="source"
-        className="w-2 h-2 bg-blue-500"
-      />
+      <Handle type="source" position={Position.Top} id="source" />
       <div className="flex items-center justify-center">
         <FcProcess />
         <p className="text-[10px] lg:text-xs">{data.label}</p>
       </div>
-      <Handle
-        type="target"
-        position={Position.Bottom}
-        id="target"
-        className="w-2 h-2 bg-red-500"
-      />
+      <Handle type="target" position={Position.Bottom} id="target" />
     </div>
   );
 };

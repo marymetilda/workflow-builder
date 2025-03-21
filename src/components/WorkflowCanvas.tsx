@@ -55,54 +55,45 @@ const WorkflowCanvas = () => {
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      console.log("Connection Attempt:", connection);
+      console.log("Connection Event Triggered:", connection);
 
       if (!connection.source || !connection.target) {
         console.error(
-          "Invalid connection: Missing source or target",
+          "Invalid connection: source or target missing",
           connection
         );
         return;
       }
 
-      setEdges((prevEdges) => {
-        const latestNodes = nodes; // Ensure nodes are updated correctly
+      console.log(
+        `🔵 Source: ${connection.source}, Source Handle: ${connection.sourceHandle}`
+      );
+      console.log(
+        `🔴 Target: ${connection.target}, Target Handle: ${connection.targetHandle}`
+      );
 
-        const sourceNode = latestNodes.find(
-          (node) => node.id === connection.source
-        );
-        const targetNode = latestNodes.find(
-          (node) => node.id === connection.target
-        );
+      let label = "";
 
-        console.log("Source Node:", sourceNode);
-        console.log("Source Handle:", connection.sourceHandle);
+      if (connection.sourceHandle === "yes") {
+        label = "Yes";
+      } else if (connection.sourceHandle === "no") {
+        label = "No";
+      }
 
-        let label = "";
+      const newEdge: Edge = {
+        id: `${connection.source}-${connection.sourceHandle}-${connection.target}-${connection.targetHandle}`,
+        source: connection.source,
+        target: connection.target,
+        sourceHandle: connection.sourceHandle,
+        targetHandle: connection.targetHandle,
+        type: "customEdge",
+        data: { label },
+      };
 
-        if (targetNode?.type === "decisionNode") {
-          if (connection.targetHandle === "yes") {
-            label = "Yes";
-          } else if (connection.targetHandle === "no") {
-            label = "No";
-          }
-        }
-
-        const newEdge: Edge = {
-          id: `${connection.source}-${connection.sourceHandle || "default"}-${connection.target}-${connection.targetHandle || "default"}`,
-          source: connection.source,
-          target: connection.target,
-          type: "customEdge",
-          data: { label },
-          sourceHandle: connection.sourceHandle || undefined,
-          targetHandle: connection.targetHandle || undefined,
-        };
-
-        console.log("New Edge Created:", newEdge);
-        return addEdge(newEdge, prevEdges);
-      });
+      console.log("✅ New Edge Created:", newEdge);
+      setEdges((prevEdges) => addEdge(newEdge, prevEdges));
     },
-    [setEdges, nodes]
+    [setEdges]
   );
 
   const saveHistory = (newEdges?: Edge<NodeData>[]) => {
