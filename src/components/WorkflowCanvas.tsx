@@ -55,8 +55,6 @@ const WorkflowCanvas = () => {
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      console.log("Connection Event Triggered:", connection);
-
       if (!connection.source || !connection.target) {
         console.error(
           "Invalid connection: source or target missing",
@@ -64,13 +62,6 @@ const WorkflowCanvas = () => {
         );
         return;
       }
-
-      console.log(
-        `🔵 Source: ${connection.source}, Source Handle: ${connection.sourceHandle}`
-      );
-      console.log(
-        `🔴 Target: ${connection.target}, Target Handle: ${connection.targetHandle}`
-      );
 
       let label = "";
 
@@ -90,7 +81,6 @@ const WorkflowCanvas = () => {
         data: { label },
       };
 
-      console.log("✅ New Edge Created:", newEdge);
       setEdges((prevEdges) => addEdge(newEdge, prevEdges));
     },
     [setEdges]
@@ -203,7 +193,7 @@ const WorkflowCanvas = () => {
     <div className="w-full h-screen bg-gray-100 relative flex flex-col">
       <Header onSave={onSave} onLoad={onLoad} onUndo={onUndo} onRedo={onRedo} />
       <div className="flex flex-1 relative">
-        <div className="w-20 md:w-32 lg:w-52">
+        <div className="w-20 md:w-32 lg:w-52 xl:w-60">
           <Sidebar />
         </div>
         <div

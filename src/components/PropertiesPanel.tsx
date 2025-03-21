@@ -51,7 +51,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   };
 
   return (
-    <div className="p-4 border-l bg-white">
+    <div className="p-4 border-l bg-white max-w-60">
       <h3 className="text-lg font-semibold mb-2">Node Properties</h3>
       <label className="block mb-2">
         Label:

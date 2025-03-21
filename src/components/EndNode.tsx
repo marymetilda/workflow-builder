@@ -1,5 +1,6 @@
 import { Handle, Position } from "@xyflow/react";
 import { NodeData } from "./NodeComponent";
+import { GiFinishLine } from "react-icons/gi";
 
 const EndNode: React.FC<{ data: NodeData }> = ({ data }) => {
   return (
@@ -10,7 +11,10 @@ const EndNode: React.FC<{ data: NodeData }> = ({ data }) => {
         id="source"
         className="w-2 h-2 bg-blue-500"
       />
-      <p className="text-[10px] lg:text-lg">{data.label}</p>
+      <div className="flex items-center justify-center">
+        <GiFinishLine className="text-pink-600" />
+        <p className="text-[10px] lg:text-lg">{data.label}</p>
+      </div>
     </div>
   );
 };
