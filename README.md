@@ -47,7 +47,7 @@ Ensure you have the following installed:
    ```sh
    npm run dev
    ```
-4. Open the browser and navigate to `http://localhost:3000`.
+4. Open the browser and navigate to `http://localhost:5173/`.
 
 ## Usage Guide
 
